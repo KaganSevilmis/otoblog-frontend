@@ -1,4 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router'; // Router'ı import edin
+import store from './store'; // Eğer Vuex kullanıyorsanız
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+app.use(router); // Router'ı Vue uygulamasına dahil edin
+app.use(store); // Eğer Vuex kullanıyorsanız
+app.mount('#app');

@@ -17,5 +17,9 @@ module.exports = defineConfig({
       args[0]['__VUE_PROD_HYDRATION_MISMATCH_DETAILS__'] = JSON.stringify(false);
       return args;
     });
+  },
+  devServer: {
+    proxy: 'http://localhost:8000', // Backend URL'si
+    // Diğer devServer ayarları burada olabilir
   }
 });

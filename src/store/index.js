@@ -2,16 +2,16 @@ import { createStore } from 'vuex';
 
 const store = createStore({
   state: {
-    posts: [],
-    post: null,
+    cars: [], // Postlar yerine cars kullanıyoruz
+    car: null, // Tekil post yerine tekil car
     comments: [],
   },
   mutations: {
-    setPosts(state, posts) {
-      state.posts = posts;
+    setCars(state, cars) {
+      state.cars = cars;
     },
-    setPost(state, post) {
-      state.post = post;
+    setCar(state, car) {
+      state.car = car;
     },
     setComments(state, comments) {
       state.comments = comments;
@@ -21,23 +21,23 @@ const store = createStore({
     },
   },
   actions: {
-    async fetchPosts({ commit }) {
-      const response = await fetch('http://localhost:8080/posts');
-      const posts = await response.json();
-      commit('setPosts', posts);
+    async fetchCars({ commit }) {
+      const response = await fetch('http://localhost:8000/cars');
+      const cars = await response.json();
+      commit('setCars', cars);
     },
-    async fetchPost({ commit }, id) {
-      const response = await fetch(`http://localhost:8080/posts/${id}`);
-      const post = await response.json();
-      commit('setPost', post);
+    async fetchCar({ commit }, id) {
+      const response = await fetch(`http://localhost:8000/cars/${id}`);
+      const car = await response.json();
+      commit('setCar', car);
     },
-    async fetchComments({ commit }, postId) {
-      const response = await fetch(`http://localhost:8080/posts/${postId}/comments`);
+    async fetchComments({ commit }, carId) { // carId kullanarak comments almak
+      const response = await fetch(`http://localhost:8000/cars/${carId}/comments`);
       const comments = await response.json();
       commit('setComments', comments);
     },
     async addComment({ commit }, comment) {
-      const response = await fetch('http://localhost:8080/comments', {
+      const response = await fetch('http://localhost:8000/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,29 +1,35 @@
 <template>
   <div class="post-detail">
-    <img :src="post.image" :alt="post.title" class="post-detail-image" />
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.summary }}</p>
-    <p>{{ post.content }}</p> <!-- Varsayılan içerik alanı -->
+    <img :src="car.image" :alt="car.title" class="post-detail-image" />
+    <h1>{{ car.title }}</h1>
+    <p>{{ car.summary }}</p>
+    <p>{{ car.content }}</p>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'PostDetailPage',
   data() {
     return {
-      post: {}
+      car: {}
     };
   },
   created() {
-    const postId = this.$route.params.id;
-    // Örnek veri, gerçek veri kaynağınızdan fetch yapabilirsiniz
-    const posts = [
-      { id: 1, title: 'Araba Park Etme Teknikleri Rehberi', summary: 'Sürüş deneyiminiz boyunca aracınızı farklı yerlere ve farklı pozisyonlara park etmeniz gerekecektir.', content: 'Detaylı içerik burada.', image: 'https://png.pngtree.com/thumb_back/fw800/background/20230816/pngtree-a-line-of-cars-in-an-inground-parking-lot-image_13059211.jpg' },
-      { id: 2, title: 'Post 2', summary: 'Bir araç için lastik satın almak zor bir iş olabilir. Aşınma derecelendirmeleri, hız derecelendirmeleri, sıcaklık önerileri ve boyutları arasında, belirli bir araç ve coğrafi bölge için hangi lastiğin en uygun olduğunu belirlemek zordur.', content: 'Content of Post 2', image: 'https://jantdunyasi.com/cdn/shop/articles/dort-mevsim-lastik-v1_1024x1024.jpg?v=1701378848' },
-      { id: 3, title: 'Post 3', summary: 'Summary of Post 3', content: 'Content of Post 3', image: 'path/to/image3.jpg' }
-    ];
-    this.post = posts.find(post => post.id == postId);
+    this.fetchCarDetails();
+  },
+  methods: {
+    async fetchCarDetails() {
+      try {
+        const carId = this.$route.params.id;
+        const response = await axios.get(`http://localhost:8000/cars/${carId}`);
+        this.car = response.data;
+      } catch (error) {
+        console.error('Veri çekme hatası:', error);
+      }
+    }
   }
 };
 </script>

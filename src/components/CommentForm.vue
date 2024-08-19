@@ -5,42 +5,76 @@
       <textarea v-model="text" placeholder="Write your comment here"></textarea>
       <button type="submit">Submit</button>
     </form>
+    <div class="comments">
+      <h4>Comments:</h4>
+      <ul>
+        <li v-for="comment in comments" :key="comment.id">
+          {{ comment.text }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  props: ['postId'],
+  props: ['carId'],
   data() {
     return {
       text: '',
+      comments: [],
+      error: '',
     };
   },
+  created() {
+    this.fetchComments();
+  },
   methods: {
-    submitComment() {
+    async fetchComments() {
+      try {
+        const response = await axios.get(`/api/posts/${this.postId}/comments`); // Backend'den veriyi çek
+        this.comments = response.data; // Yorumları comments değişkenine ata
+      } catch (error) {
+        this.error = 'Yorumlar yüklenemedi: ' + error.message;
+      }
+    },
+    async submitComment() {
       const newComment = {
-        id: Date.now(),
         text: this.text,
       };
-      this.$emit('comment-added', newComment);
-      this.text = '';
+      try {
+        await axios.post(`/api/posts/${this.postId}/comments`, newComment); // Yorum ekle
+        this.comments.push(newComment); // Yorumları güncelle
+        this.text = ''; // Textarea'yı temizle
+      } catch (error) {
+        this.error = 'Yorum eklenemedi: ' + error.message;
+      }
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .comment-form {
   margin-top: 20px;
 }
 
 textarea {
   width: 100%;
-  height: 100px;
-  margin-bottom: 10px;
 }
 
-button {
-  padding: 10px 20px;
+.comments {
+  margin-top: 20px;
+}
+
+.comments ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.comments li {
+  margin-bottom: 10px;
 }
 </style>

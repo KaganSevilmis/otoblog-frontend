@@ -1,9 +1,9 @@
 <template>
-  <div :class="['post-item', { 'featured-post': post.id === 1 }]" @click="$emit('click')">
-    <img :src="post.image" :alt="post.title" class="post-image" />
+  <div :class="['post-item', { 'featured-post': post.id === 1 || post.id === 2 }]" @click="$emit('click')">
+    <img v-if="post.görseller && post.görseller.length > 0" :src="post.görseller[0]" :alt="getTitle() || 'Başlık Yok'" class="post-image" />
     <div class="post-content">
-      <h1>{{ post.title }}</h1>
-      <p>{{ post.summary }}</p>
+      <h1>{{ getTitle() || 'Başlık Yok' }}</h1>
+      <p>{{ getSummary() || 'Özet Yok' }}</p>
     </div>
   </div>
 </template>
@@ -15,16 +15,34 @@ export default {
       type: Object,
       required: true,
       default: () => ({
-        title: '',
-        summary: '',
-        image: ''
+        id: 0,
+        başlıklar: [],
+        içerik: '',
+        görseller: []
       })
     }
+  },
+  methods: {
+    getTitle() {
+      return this.post.başlıklar && this.post.başlıklar.length > 0 ? this.post.başlıklar[0] : '';
+    },
+    getSummary() {
+      if (this.post.id === 1 || this.post.id === 2) {
+        // İlk iki post için özetin uzunluğunu artır
+        return this.post.içerik ? this.post.içerik.substring(0, 200) + '...' : ''; // Uzunluğu 200 karaktere çıkardık
+      }
+      // Diğer postlar için varsayılan 100 karakter özet
+      return this.post.içerik ? this.post.içerik.substring(0, 100) + '...' : '';
+    }
+  },
+  mounted() {
+    console.log('Post data:', JSON.stringify(this.post));
   }
 };
 </script>
 
 <style>
+/* Stil kurallarını kontrol edin */
 .post-item {
   display: flex;
   flex-direction: column;
@@ -33,13 +51,13 @@ export default {
   overflow: hidden;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  margin-bottom: 0px; /* Postlar arasındaki boşluk */
+  margin-bottom: 20px; /* Postlar arasındaki boşluk */
 }
 
-/* 1. post için özel stil */
+/* İlk iki post için özel stil */
 .featured-post .post-image {
   width: 100%;
-  height: 500px; /* 1. postun görsel boyutunu bozmadan tut */
+  height: 400px; /* İlk iki postun görsel boyutunu arttırdık */
 }
 
 /* Diğer postlar için standart görsel yüksekliği */

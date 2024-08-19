@@ -7,4 +7,4 @@ const app = createApp(App);
 
 app.use(router); // Router'ı Vue uygulamasına dahil edin
 app.use(store); // Eğer Vuex kullanıyorsanız
-app.mount('#app');
+app.mount('#app'); // #app ID'sine sahip elemana Vue uygulamasını monte edin

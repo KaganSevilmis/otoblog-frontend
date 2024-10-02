@@ -1,21 +1,22 @@
 <template>
   <div id="app">
-    <HomePage />
-    <router-view /> <!-- Bu, mevcut rotanın içeriğini render eder -->
+    <SiteHeader />
+    <RouterView></RouterView>
   </div>
 </template>
 
 <script>
-import HomePage from './components/HomePage.vue';
+import { RouterView } from "vue-router"
+import SiteHeader from './components/SiteHeader.vue'
 
 export default {
   name: 'App',
   components: {
-    HomePage, // HomePage bileşenini tanımlayın
-  },
+    RouterView,
+    SiteHeader
+  }
 };
 </script>
 
 <style>
-
 </style>

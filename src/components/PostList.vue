@@ -20,7 +20,6 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 import PostItem from './PostItem.vue';
@@ -46,16 +45,32 @@ export default {
   methods: {
     async fetchPosts() {
       try {
-        const response = await axios.get('http://localhost:8000/cars'); // Proxy ayarı nedeniyle tam URL'yi belirtmenize gerek yok
-        console.log('Veri başarıyla alındı:', response.data); // Yanıtı kontrol et
-        
-        // Yanıtın bir dizi olduğunu doğrula
-        if (Array.isArray(response.data)) {
-          this.additionalPosts = response.data;
+        const response = await axios.get('http://localhost:8000/cars', {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+        });
+        console.log('Veri başarıyla alındı:', response.data);
 
-          // Featured posts olarak ilk iki postu seçin (örnek olarak)
+        if (Array.isArray(response.data)) {
+          // Filtreleme ve veri işleme
+          const filteredPosts = response.data.filter(car => 
+            car.başlıklar && car.başlıklar.length > 0 && car.görseller && car.görseller.length > 0
+          );
+
+          this.additionalPosts = filteredPosts.map(car => ({
+            ...car,
+            title: car.başlıklar[0] || 'Başlık Yok',
+            image: car.görseller[0] || '',
+            summary: car.içerik ? car.içerik.substring(0, 100) + '...' : 'Özet mevcut değil'
+          }));
+
           this.featuredPost1 = this.additionalPosts[0] || null;
           this.featuredPost2 = this.additionalPosts[1] || null;
+
+          // Debugging
+          console.log('Featured Posts:', this.featuredPost1, this.featuredPost2);
+          console.log('Additional Posts:', this.additionalPosts);
         } else {
           console.error('Beklenen veri formatı sağlanamadı:', response.data);
         }
@@ -64,7 +79,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },  
+    },
   },
 };
 </script>
@@ -86,12 +101,12 @@ export default {
 .featured-post {
   display: flex;
   flex-direction: column;
-  flex: 2; /* İlk post genişliği */
+  flex: 2;
 }
 
 .sidebar-container {
-  flex: 1; /* Sidebar genişliği */
-  min-width: 50px; /* Sidebar minimum genişliği */
+  flex: 1;
+  min-width: 50px;
 }
 
 .additional-posts {
@@ -100,7 +115,7 @@ export default {
 
 .post-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* 3'er 3'er sıralama */
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 20px;
 }
 </style>
